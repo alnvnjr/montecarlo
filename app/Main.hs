@@ -5,27 +5,68 @@ module Main where
 import Lib
 
 import System.Random.MWC
-import Data.Vector.Unboxed as DV
+import Data.Vector.Unboxed as DV hiding (replicateM)
 import Control.Monad.ST
+import Control.Monad
 
+
+multMon :: IO ()
+multMon = do
+    putStrLn "How Many Iterations? (Total Runs)"
+    iter <- getLine
+    let iter' = read iter :: Float
+    putStrLn "Time Step? (0.01, 0.02, 0.03)"
+    dt <- getLine
+    let dt' = read dt :: Float
+    putStrLn "Stock Price:"
+    so <- getLine
+    let so' = read so :: Float
+    putStrLn "Implied Volatility"
+    sig <- getLine
+    let sig' = read sig :: Float
+    putStrLn "Rate"
+    r <- getLine
+    let r' = read r :: Float
+
+    let num_steps = numIter dt
+    let i = convToInt iter
+    let loop = do
+            let oldVec = createVecIO num_steps
+            the_nums <- sequence oldVec
+            putStrLn (show $ monteBundled so' sig' r' dt' the_nums)
+    replicateM i loop
+    putStrLn "End Results"
+    
 
 
 main :: IO ()
 main = do
-    putStrLn "How Many Iterations?"
+    putStrLn "How Many Iterations? (Total Runs)"
     iter <- getLine
+    let iter' = read iter :: Float
+    putStrLn "Time Step? (0.01, 0.02, 0.03)"
+    dt <- getLine
+    let dt' = read dt :: Float
     putStrLn "Stock Price:"
     so <- getLine
+    let so' = read so :: Float
     putStrLn "Implied Volatility"
     sig <- getLine
+    let sig' = read sig :: Float
     putStrLn "Rate"
     r <- getLine
-    let iter' = convToInt iter
+    let r' = read r :: Float
+    let iter' = numIter dt
     let oldVec = createVecIO iter'
     the_nums <- sequence oldVec -- [IO Float] -> IO [Float]
-    putStrLn (show the_nums)
     print the_nums
-
+    putStrLn "Monte Results"
+    putStrLn (show $ monteBundled so' sig' r' dt' the_nums)
+    
+numIter :: [Char] -> Float
+numIter step = 1 / step'
+    where
+        step' = read step :: Float
 
 createVecIO :: Float -> [IO Float]
 createVecIO ind 
@@ -34,34 +75,41 @@ createVecIO ind
         let va = withSystemRandom $ \(gen::GenST s) -> uniform gen :: ST s (Float)
         va : createVecIO (ind-1)
 
-convToInt :: [Char] -> Float
-convToInt input = read input :: Float
+
+convToInt :: [Char] -> Int
+convToInt input = read input :: Int
 
 ------------------------------------------------------------------------------------------------
 -- Monte given a time step
--- montePrice' :: [Float] -> Float -> Float -> 
+monteBundled :: Float -> Float -> Float -> Float -> [Float] -> [(Float, Float)]
+monteBundled so sig r dt eps = Prelude.zip times f
+    where    
+        f = montePrice so sig r (timeEpsZip eps dt)
+        times = timeStep dt
 
-montePrice :: Double -> Double -> Double -> Double -> Double -> [Double]
-montePrice so sig r eps dt = Prelude.map f times
+montePrice :: Float -> Float -> Float -> [(Float, Float)] -> [Float]
+montePrice _ _ _ [] = []
+montePrice so sig r (x:xs) = so * (exp (y + z)) : montePrice so sig r xs
+    where
+        y = (r - ((sig**2) / 2)) * t
+        z = (sig * sqrt t) * eps
+        t = fst x
+        eps = snd x
+        
+timeEpsZip :: [Float] -> Float -> [(Float,Float)]
+timeEpsZip eps dt = Prelude.zip times eps
     where
         times = timeStep dt
-        f x = so * (exp (y + z))
-          where
-              y = (r - ((sig**2) / 2)) * x
-              z = (sig * sqrt x) * eps
-timeStep :: Double -> [Double]
+
+timeStep :: Float -> [Float]
 timeStep dt 
     | dt >= 1     = []
     | otherwise   = [0, dt .. 1]
 
-timeStep' :: Float -> [Float]
-timeStep' dt 
-    | dt >= 1     = []
-    | otherwise   = [0, dt .. 1]
 
 
 ---------------------------------------------------------------------------------------
--- Vec Utils
+-- | Vec Utils (Not all used / Referential)
 countVec :: Vector Int -> [Char]
 countVec input = show (DV.length input)
 
