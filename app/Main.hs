@@ -9,6 +9,7 @@ import Data.Vector.Unboxed as DV hiding (replicateM, (++))
 import Control.Monad.ST
 import Control.Monad
 
+import Functions.Exp.LBR
 
 main :: IO ()
 main = do

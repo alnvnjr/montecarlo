@@ -34,10 +34,11 @@ packages:
 # These entries can reference officially published versions as well as
 # forks / in-progress versions pinned to a git hash. For example:
 #
-# extra-deps:
-# - acme-missiles-0.3
-# - git: https://github.com/commercialhaskell/stack.git
-#   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
+extra-deps:
+# -impvol-0.1.0.0
+- git: git@github.com:feio-ai/impvol
+  commit: 8b2feb39651e6bdc74089867e10d405315e0283d
+
 #
 # extra-deps: []
 

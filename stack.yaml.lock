@@ -3,7 +3,21 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    cabal-file:
+      size: 1461
+      sha256: 6fb02a42db189d088f47e54645598305da3be92f0c25d6427c87e5977404aeb3
+    name: impvol
+    version: 0.1.0.0
+    git: git@github.com:feio-ai/impvol
+    pantry-tree:
+      size: 19558
+      sha256: 40b707cbb183088eefb76eadf8210e961a69b38ab1d3348b8fdff7e7e8928d56
+    commit: 8b2feb39651e6bdc74089867e10d405315e0283d
+  original:
+    git: git@github.com:feio-ai/impvol
+    commit: 8b2feb39651e6bdc74089867e10d405315e0283d
 snapshots:
 - completed:
     size: 523541
