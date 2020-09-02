@@ -1,5 +1,5 @@
 {-# LANGUAGE ScopedTypeVariables #-}
-
+-- Method of Random Number Generation
 module HaskRand where
 
 import System.Random.MWC

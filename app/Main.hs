@@ -11,6 +11,7 @@ import Control.Monad
 
 import Functions.Exp.LBR
 
+-- Get args from user
 main :: IO ()
 main = do
     putStrLn "How Many Iterations? (Total Runs)"
@@ -41,9 +42,9 @@ main = do
     putStrLn "End Results"
   
 numIter :: [Char] -> Float
-numIter step = 1 / step'
+numIter step = 1 / x
     where
-        step' = read step :: Float
+        x = read step :: Float
 
 createVecIO :: Float -> [IO Float]
 createVecIO ind 
@@ -53,7 +54,7 @@ createVecIO ind
         va : createVecIO (ind-1)
 
 ------------------------------------------------------------------------------------------------
--- Monte given a time step
+-- Monte Carlo Implementation
 monteBundled :: Float -> Float -> Float -> Float -> [Float] -> [(Float, Float)]
 monteBundled so sig r dt eps = Prelude.zip times f
     where    
